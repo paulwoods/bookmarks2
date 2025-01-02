@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mrpaulwoods.bookmarks.bookmark.Bookmark;
+import org.mrpaulwoods.bookmarks.bookmark.BookmarkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpMethod.GET;
@@ -27,6 +29,9 @@ class BookmarksApplicationTests {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private BookmarkRepository bookmarkRepository;
 
     @Test
     public void testBookmarkPage() {
@@ -42,7 +47,7 @@ class BookmarksApplicationTests {
         Assertions.assertAll(
                 () -> Assertions.assertEquals(OK, response.getStatusCode()),
                 () -> Assertions.assertEquals("Google", response.getBody().getContent().getFirst().getName()),
-                () -> Assertions.assertEquals("https://google.com", response.getBody().getContent().getFirst().getUrl())
+                () -> Assertions.assertEquals("https://www.google.com", response.getBody().getContent().getFirst().getUrl())
         );
 
     }
@@ -63,6 +68,27 @@ class BookmarksApplicationTests {
                 () -> Assertions.assertEquals(CREATED, response.getStatusCode()),
                 () -> Assertions.assertEquals("IBM", response.getBody().getName()),
                 () -> Assertions.assertEquals("https://www.ibm.com", response.getBody().getUrl()),
+                () -> Assertions.assertTrue(response.getBody().getId().toString().length() > 10)
+        );
+
+    }
+
+    @Test
+    public void testBookmarkRead() {
+
+        UUID id = bookmarkRepository.findByName("Google").getId();
+
+        ResponseEntity<Bookmark> response = restTemplate.exchange(
+                "/api/v1/bookmark/%s".formatted(id),
+                GET,
+                new HttpEntity<>(null, null),
+                Bookmark.class
+        );
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(OK, response.getStatusCode()),
+                () -> Assertions.assertEquals("Google", response.getBody().getName()),
+                () -> Assertions.assertEquals("https://www.google.com", response.getBody().getUrl()),
                 () -> Assertions.assertTrue(response.getBody().getId().toString().length() > 10)
         );
 

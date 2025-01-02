@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -28,6 +29,12 @@ public class BookmarkController {
         bookmark = bookmarkRepository.save(bookmark);
         String location = "/api/v1/bookmark/" + bookmark.getId();
         return ResponseEntity.created(URI.create(location)).body(bookmark);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Bookmark> read(@PathVariable UUID id) {
+        Bookmark bookmark = bookmarkRepository.findById(id).orElseThrow(() -> new BookmarkNotFoundException(id));
+        return ResponseEntity.ok(bookmark);
     }
 
 }
