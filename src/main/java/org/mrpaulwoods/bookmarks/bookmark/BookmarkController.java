@@ -25,8 +25,8 @@ public class BookmarkController {
     }
 
     @PostMapping
-    public ResponseEntity<Bookmark> create(@Valid @RequestBody Bookmark bookmark) {
-        bookmark = bookmarkRepository.save(bookmark);
+    public ResponseEntity<Bookmark> create(@Valid @RequestBody Bookmark bookmarkForm) {
+        Bookmark bookmark = bookmarkRepository.save(bookmarkForm);
         String location = "/api/v1/bookmark/" + bookmark.getId();
         return ResponseEntity.created(URI.create(location)).body(bookmark);
     }
@@ -35,6 +35,27 @@ public class BookmarkController {
     public ResponseEntity<Bookmark> read(@PathVariable UUID id) {
         Bookmark bookmark = bookmarkRepository.findById(id).orElseThrow(() -> new BookmarkNotFoundException(id));
         return ResponseEntity.ok(bookmark);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Bookmark> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody Bookmark bookmarkForm
+    ) {
+        Bookmark bookmark = bookmarkRepository.findById(id).orElseThrow(() -> new BookmarkNotFoundException(id));
+        bookmark.setName(bookmarkForm.getName());
+        bookmark.setUrl(bookmarkForm.getUrl());
+        bookmarkRepository.save(bookmark);
+        return ResponseEntity.ok(bookmark);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable UUID id
+    ) {
+        Bookmark bookmark = bookmarkRepository.findById(id).orElseThrow(() -> new BookmarkNotFoundException(id));
+        bookmarkRepository.delete(bookmark);
+        return ResponseEntity.noContent().build();
     }
 
 }
