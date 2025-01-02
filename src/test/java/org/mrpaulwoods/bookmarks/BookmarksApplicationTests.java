@@ -11,12 +11,14 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @SuppressWarnings("DataFlowIssue")
@@ -31,7 +33,7 @@ class BookmarksApplicationTests {
 
         ResponseEntity<JacksonPage<Bookmark>> response = restTemplate.exchange(
                 "/api/v1/bookmark",
-                HttpMethod.GET,
+                GET,
                 new HttpEntity<String>(null, null),
                 new ParameterizedTypeReference<>() {
                 }
@@ -41,6 +43,27 @@ class BookmarksApplicationTests {
                 () -> Assertions.assertEquals(OK, response.getStatusCode()),
                 () -> Assertions.assertEquals("Google", response.getBody().getContent().getFirst().getName()),
                 () -> Assertions.assertEquals("https://google.com", response.getBody().getContent().getFirst().getUrl())
+        );
+
+    }
+
+    @Test
+    public void testBookmarkCreate() {
+
+        Bookmark ibm = new Bookmark("IBM", "https://www.ibm.com");
+
+        ResponseEntity<Bookmark> response = restTemplate.exchange(
+                "/api/v1/bookmark",
+                POST,
+                new HttpEntity<>(ibm, null),
+                Bookmark.class
+        );
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(CREATED, response.getStatusCode()),
+                () -> Assertions.assertEquals("IBM", response.getBody().getName()),
+                () -> Assertions.assertEquals("https://www.ibm.com", response.getBody().getUrl()),
+                () -> Assertions.assertTrue(response.getBody().getId().toString().length() > 10)
         );
 
     }

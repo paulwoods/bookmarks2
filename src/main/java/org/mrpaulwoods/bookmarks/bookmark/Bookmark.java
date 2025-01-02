@@ -1,6 +1,8 @@
 package org.mrpaulwoods.bookmarks.bookmark;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
@@ -17,10 +19,14 @@ public class Bookmark {
     @Column(nullable = false)
     private UUID id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 200)
+    @NotNull
+    @Size(min = 1, max = 200)
     private String name;
 
     @Column(name = "url", nullable = false, length = 1000)
+    @NotNull
+    @Size(min = 1, max = 1000)
     private String url;
 
     public Bookmark() {
