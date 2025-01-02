@@ -21,12 +21,12 @@ public class Bookmark {
 
     @Column(name = "name", nullable = false, length = 200)
     @NotNull
-    @Size(min = 1, max = 200)
+    @Size(min = 1, max = 200, message = "The name must be between 1 and 200 characters.")
     private String name;
 
     @Column(name = "url", nullable = false, length = 1000)
     @NotNull
-    @Size(min = 1, max = 1000)
+    @Size(min = 1, max = 1000, message = "The name must be between 1 and 1000 characters.")
     private String url;
 
     public Bookmark() {
