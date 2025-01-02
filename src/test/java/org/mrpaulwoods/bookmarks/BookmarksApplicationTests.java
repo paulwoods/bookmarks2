@@ -1,20 +1,17 @@
 package org.mrpaulwoods.bookmarks;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mrpaulwoods.bookmarks.bookmark.Bookmark;
 import org.mrpaulwoods.bookmarks.bookmark.BookmarkRepository;
+import org.mrpaulwoods.bookmarks.util.JacksonPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -92,14 +89,6 @@ class BookmarksApplicationTests {
                 () -> Assertions.assertTrue(response.getBody().getId().toString().length() > 10)
         );
 
-    }
-
-    // https://stackoverflow.com/questions/34099559/how-to-consume-pageentity-response-using-spring-resttemplate
-    @JsonIgnoreProperties("pageable")
-    public static class JacksonPage<T> extends PageImpl<T> {
-        private JacksonPage(List<T> content, int number, int size, long totalElements) {
-            super(content, PageRequest.of(number, size), totalElements);
-        }
     }
 
 }
