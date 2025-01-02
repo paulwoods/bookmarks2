@@ -19,7 +19,7 @@ public class BookmarkBootstrap implements CommandLineRunner {
             return;
         }
 
-        log.info("created bookmark {}", bookmarkRepository.save(new Bookmark("google", "https://google.com")));
+        log.info("created bookmark {}", bookmarkRepository.save(new Bookmark("Google", "https://google.com")));
     }
 
 }
