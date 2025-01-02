@@ -13,7 +13,7 @@ public class BookmarkBootstrap implements CommandLineRunner {
     private final BookmarkRepository bookmarkRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
 
         if (bookmarkRepository.count() != 0L) {
             return;
